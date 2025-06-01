@@ -1,10 +1,11 @@
 package main;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Hand {
     private List<Card> cards;
-    private int rank;
+    private HandRank rank;
 
     public Hand(List<Card> cards) {
         this.cards = cards;
@@ -12,7 +13,11 @@ public class Hand {
         this.rank = calculateRank();
     }
 
-    public int getRank() {
+    public List<Card> getCards() {
+        return this.cards;
+    }
+
+    public HandRank getRank() {
         return this.rank;
     }
 
@@ -31,9 +36,9 @@ public class Hand {
      * 2 - Pair
      * 1 - High card
      *
-     * @return an integer from 1 to 10 representing the hand's rank
+     * @return a HandRank instance representing the rank and tie-breaking values
      */
-    private int calculateRank() {
+    private HandRank calculateRank() {
         // Count occurrences of each card value and suit.
         Map<Integer, Integer> valueCounts = new HashMap<>();
         Map<Character, Integer> suitCounts = new HashMap<>();
@@ -48,19 +53,21 @@ public class Hand {
         boolean isFlush = suitCounts.size() == 1;
         boolean isStraight = hasStraight();
 
+        List<Integer> tieBreakingList = buildTieBreakingList(valueCounts);
+
         // Check if the hand satisfies each rank from highest to lowest
         // Checking from the highest ensures that if a hand matches mutliple patterns,
         // the highest-ranking one is returned.
-        if (isFlush && isStraight && this.cards.get(0).getValue() == 14) return 10;
-        if (isFlush && isStraight) return 9;
-        if (valueCounts.containsValue(4)) return 8;
-        if (valueCounts.containsValue(3) && valueCounts.containsValue(2)) return 7;
-        if (isFlush) return 6;
-        if (isStraight) return 5;
-        if (valueCounts.containsValue(3)) return 4;
-        if (valueCounts.values().stream().filter(v -> v == 2).count() == 2) return 3;
-        if (valueCounts.containsValue(2)) return 2;
-        return 1;
+        if (isFlush && isStraight && this.cards.get(0).getValue() == 14) return new HandRank(10, tieBreakingList);
+        if (isFlush && isStraight) return new HandRank(9, tieBreakingList);
+        if (valueCounts.containsValue(4)) return new HandRank(8, tieBreakingList);
+        if (valueCounts.containsValue(3) && valueCounts.containsValue(2)) return new HandRank(7, tieBreakingList);
+        if (isFlush) return new HandRank(6, tieBreakingList);
+        if (isStraight) return new HandRank(5, tieBreakingList);
+        if (valueCounts.containsValue(3)) return new HandRank(4, tieBreakingList);
+        if (valueCounts.values().stream().filter(v -> v == 2).count() == 2) return new HandRank(3, tieBreakingList);
+        if (valueCounts.containsValue(2)) return new HandRank(2, tieBreakingList);
+        return new HandRank(1, tieBreakingList);
     }
 
     private boolean hasStraight() {
@@ -70,6 +77,27 @@ public class Hand {
             }
         }
         return true;
+    }
+
+    /**
+     * Builds a list used for tie-breaking.
+     * The list is sorted in two steps:
+     *  - First, by the occurrence of each card value (i.e., valueCount's value) in descending order.
+     *  - Second, by the card value itself (i.e., valueCount's key) in descending order when frequencies are equal.
+     * This ensures that card values used to determine the rank appear first (as the rank of  the hand is determined by
+     * card with high occurrences), followed by reamining high cards, preserving correct tie-breaking order.
+     *
+     * @param valueCounts a map of card values to their occurrences
+     * @return a list of card values sorted for tie-breaking
+     */
+    private List<Integer> buildTieBreakingList(Map<Integer, Integer> valueCounts) {
+        return valueCounts.entrySet().stream()
+                .sorted((a, b) -> {
+                    int cmp = Integer.compare(b.getValue(), a.getValue());
+                    return cmp != 0 ? cmp : Integer.compare(b.getKey(), a.getKey());
+                })
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
 }
 

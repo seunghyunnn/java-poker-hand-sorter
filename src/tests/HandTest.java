@@ -5,6 +5,7 @@ import main.Hand;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -22,16 +23,27 @@ public class HandTest {
 
     @Test
     public void testGetRank() {
-        assertEquals(10, ROYAL_FLUSH.getRank());
-        assertEquals(9, STRAIGHT_FLUSH.getRank());
-        assertEquals(8, FOUR_OF_A_KIND.getRank());
-        assertEquals(7, FULL_HOUSE.getRank());
-        assertEquals(6, FLUSH.getRank());
-        assertEquals(5, STRAIGHT.getRank());
-        assertEquals(4, THREE_OF_A_KIND.getRank());
-        assertEquals(3, TWO_PAIRS.getRank());
-        assertEquals(2, PAIR.getRank());
-        assertEquals(1, HIGH_CARD.getRank());
+        assertEquals(10, ROYAL_FLUSH.getRank().getValue());
+        assertEquals(9, STRAIGHT_FLUSH.getRank().getValue());
+        assertEquals(8, FOUR_OF_A_KIND.getRank().getValue());
+        assertEquals(7, FULL_HOUSE.getRank().getValue());
+        assertEquals(6, FLUSH.getRank().getValue());
+        assertEquals(5, STRAIGHT.getRank().getValue());
+        assertEquals(4, THREE_OF_A_KIND.getRank().getValue());
+        assertEquals(3, TWO_PAIRS.getRank().getValue());
+        assertEquals(2, PAIR.getRank().getValue());
+        assertEquals(1, HIGH_CARD.getRank().getValue());
+    }
+
+    @Test
+    public void testBuildTieBreakingList() {
+        assertEquals(List.of(14, 13, 12, 11, 10), ROYAL_FLUSH.getRank().getTieBreakingList());
+        // 5 comes first because 5 occurs more frequently
+        assertEquals(List.of(5, 6), FOUR_OF_A_KIND.getRank().getTieBreakingList());
+        assertEquals(List.of(5, 10), FULL_HOUSE.getRank().getTieBreakingList());
+        // 3 comes first because 3 occurs more frequently (forming three of a kind)
+        // followed by 5 and 4, which are not part of the three of a kind and are sorted in descending order
+        assertEquals(List.of(3, 5, 4), THREE_OF_A_KIND.getRank().getTieBreakingList());
     }
 
     private static Hand buildHand(String[] cardsInString) {

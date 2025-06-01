@@ -19,8 +19,8 @@ public class PokerHandSorter {
                 }
                 Hand hand1 = new Hand(cards.subList(0, 5));
                 Hand hand2 = new Hand(cards.subList(5, 10));
-                int rank1 = hand1.getRank();
-                int rank2 = hand2.getRank();
+                int rank1 = hand1.getRank().getValue();
+                int rank2 = hand2.getRank().getValue();
             }
         } catch(IOException e) {
             System.out.println("An error occurred while reading the file.");
