@@ -16,6 +16,11 @@ public class PokerHandSorter {
             while ((line=reader.readLine()) != null) {
                 List<Card> cards = new ArrayList<>();
                 String[] cardsInString = line.strip().split(" ");
+                if (cardsInString.length == 0 || cardsInString[0].isEmpty()) break;
+                if (cardsInString.length != 10) {
+                    System.err.println("Skipping this input due to incorrect number of cards: " + line);
+                    continue;
+                }
                 for (String str : cardsInString) {
                     cards.add(Card.fromString(str));
                 }
