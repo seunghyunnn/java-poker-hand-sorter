@@ -3,7 +3,7 @@ package main;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Hand {
+public class Hand implements Comparable<Hand> {
     private List<Card> cards;
     private HandRank rank;
 
@@ -19,6 +19,19 @@ public class Hand {
 
     public HandRank getRank() {
         return this.rank;
+    }
+
+    public int compareTo(Hand other) {
+        HandRank my_rank = this.rank;
+        HandRank other_rank = other.getRank();
+        if (my_rank.getValue() != other_rank.getValue()) {
+            return Integer.compare(my_rank.getValue(), other_rank.getValue());
+        }
+        for (int i = 0; i < my_rank.getTieBreakingList().size(); i++) {
+            int cmp = Integer.compare(my_rank.getTieBreakingList().get(i), other_rank.getTieBreakingList().get(i));
+            if (cmp != 0) return cmp;
+        }
+        return 0;
     }
 
     /**

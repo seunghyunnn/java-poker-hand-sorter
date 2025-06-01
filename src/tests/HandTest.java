@@ -16,7 +16,8 @@ public class HandTest {
     private static Hand FULL_HOUSE = buildHand(new String[]{"5D", "5H", "5S", "TC", "TH"});
     private static Hand FLUSH = buildHand(new String[]{"2S", "3S", "5S", "7S", "TS"});
     private static Hand STRAIGHT = buildHand(new String[]{"8D", "9H", "TS", "JC", "QH"});
-    private static Hand THREE_OF_A_KIND = buildHand(new String[]{"3D", "3H", "3S", "4C", "5H"});
+    private static Hand THREE_OF_A_KIND = buildHand(new String[]{"4D", "4H", "4S", "5C", "6H"});
+    private static Hand THREE_OF_A_KIND_2 = buildHand(new String[]{"4D", "4H", "4S", "2C", "3H"});
     private static Hand TWO_PAIRS = buildHand(new String[]{"3D", "3H", "4S", "4C", "5H"});
     private static Hand PAIR = buildHand(new String[]{"JD", "JH", "4S", "7C", "TH"});
     private static Hand HIGH_CARD = buildHand(new String[]{"AD", "QH", "TS", "7C", "5H"});
@@ -41,9 +42,18 @@ public class HandTest {
         // 5 comes first because 5 occurs more frequently
         assertEquals(List.of(5, 6), FOUR_OF_A_KIND.getRank().getTieBreakingList());
         assertEquals(List.of(5, 10), FULL_HOUSE.getRank().getTieBreakingList());
-        // 3 comes first because 3 occurs more frequently (forming three of a kind)
-        // followed by 5 and 4, which are not part of the three of a kind and are sorted in descending order
-        assertEquals(List.of(3, 5, 4), THREE_OF_A_KIND.getRank().getTieBreakingList());
+        // 4 comes first because 4 occurs more frequently (forming three of a kind)
+        // followed by 6 and 5, which are not part of the three of a kind and are sorted in descending order
+        assertEquals(List.of(4, 6, 5), THREE_OF_A_KIND.getRank().getTieBreakingList());
+    }
+
+    @Test
+    public void testCompareTo() {
+        assertEquals(1, ROYAL_FLUSH.compareTo(STRAIGHT_FLUSH));
+        assertEquals(0, FOUR_OF_A_KIND.compareTo(FOUR_OF_A_KIND));
+        assertEquals(-1, FLUSH.compareTo(FULL_HOUSE));
+        // If both hands are three of a kind, the one with the higher value wins (i.e., 6 beats 3)
+        assertEquals(1, THREE_OF_A_KIND.compareTo(THREE_OF_A_KIND_2));
     }
 
     private static Hand buildHand(String[] cardsInString) {
