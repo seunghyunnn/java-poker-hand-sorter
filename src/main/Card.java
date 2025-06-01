@@ -1,6 +1,6 @@
 package main;
 
-public class Card {
+public class Card implements Comparable<Card> {
     private int value;
     private char suit;
 
@@ -22,6 +22,10 @@ public class Card {
             case 'A': return 14;
             default: return c - '0';
         }
+    }
+
+    public int compareTo(Card other) {
+        return Integer.compare(other.getValue(), this.value); // Descending order
     }
 
     public int getValue() {
