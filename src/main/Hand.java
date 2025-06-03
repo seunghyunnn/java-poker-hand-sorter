@@ -13,22 +13,18 @@ public class Hand implements Comparable<Hand> {
         this.rank = calculateRank();
     }
 
-    public List<Card> getCards() {
-        return this.cards;
-    }
-
     public HandRank getRank() {
         return this.rank;
     }
 
     public int compareTo(Hand other) {
-        HandRank my_rank = this.rank;
-        HandRank other_rank = other.getRank();
-        if (my_rank.getValue() != other_rank.getValue()) {
-            return Integer.compare(my_rank.getValue(), other_rank.getValue());
+        HandRank myRank = this.rank;
+        HandRank otherRank = other.getRank();
+        if (myRank.getValue() != otherRank.getValue()) {
+            return Integer.compare(myRank.getValue(), otherRank.getValue());
         }
-        for (int i = 0; i < my_rank.getTieBreakingList().size(); i++) {
-            int cmp = Integer.compare(my_rank.getTieBreakingList().get(i), other_rank.getTieBreakingList().get(i));
+        for (int i = 0; i < myRank.getTieBreakingList().size(); i++) {
+            int cmp = Integer.compare(myRank.getTieBreakingList().get(i), otherRank.getTieBreakingList().get(i));
             if (cmp != 0) return cmp;
         }
         return 0;
@@ -69,7 +65,7 @@ public class Hand implements Comparable<Hand> {
         List<Integer> tieBreakingList = buildTieBreakingList(valueCounts);
 
         // Check if the hand satisfies each rank from highest to lowest
-        // Checking from the highest ensures that if a hand matches mutliple patterns,
+        // Checking from the highest ensures that if a hand matches multiple patterns
         // the highest-ranking one is returned.
         if (isFlush && isStraight && this.cards.get(0).getValue() == 14) return new HandRank(10, tieBreakingList);
         if (isFlush && isStraight) return new HandRank(9, tieBreakingList);
@@ -98,7 +94,7 @@ public class Hand implements Comparable<Hand> {
      *  - First, by the occurrence of each card value (i.e., valueCount's value) in descending order.
      *  - Second, by the card value itself (i.e., valueCount's key) in descending order when frequencies are equal.
      * This ensures that card values used to determine the rank appear first (as the rank of  the hand is determined by
-     * card with high occurrences), followed by reamining high cards, preserving correct tie-breaking order.
+     * card with high occurrences), followed by remaining high cards, preserving correct tie-breaking order.
      *
      * @param valueCounts a map of card values to their occurrences
      * @return a list of card values sorted for tie-breaking
